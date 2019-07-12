@@ -7,48 +7,46 @@ Add this plugin to your project:
 ```bash
 # Install via npm
 npm install --save-dev tailwindcss-triangle-after
+
+# Install via Yarn
+yarn add -D tailwindcss-triangle-after
 ```
 
 ## Usage
 
 This plugin generates styles for CSS based triangles via `::after` pseudo-elements.
 
-The plugin accepts multiple objects where each key defines a class suffix for a triangle name. Triangle options are...
-
-- `color`: _e.g. `colors['blue']`_
-- `direction`: _e.g. `up`, `down`, `left` or `right`_
-- `right`: (optional / default `1rem`) How far from the right of the parent should the pseudo-element be? _e.g. `2rem`._
-- `top`: (optional / default `50%`) How far from the top of the parent should the pseudo-element be?
-- `size`: (in pixels) _e.g. an array `[width, height]` or `9` for an equilateral triangle._
-
-Here is the example for adding it to your project plugins
-
 ```js
+// tailwind.config.js
 module.exports = {
-  // ...
-  plugins: [
+  theme: {
     // ...
-    require('./plugins/triangle-after')({
-      triangles: {
-        select: {
-          color: colors['blue'],
-          direction: 'down',
-          size: [10, 6],
-        },
-        next: {
-          color: colors['blue-darker'],
-          direction: 'right',
-          right: '2rem',
-          top: '3rem',
-          size: 12
-        }
+    trianglesAfter: theme => ({
+      select: {
+        color: "#000000",
+        direction: "down",
+        size: [10, 6],
+      },
+      next: {
+        color: theme("colors.blue.600"),
+        direction: "right",
+        right: "2rem",
+        top: "3rem",
+        size: 12,
       },
     }),
-  ],
-}
+    // ...
+  },
+  variants: {
+    // ...
+    trianglesAfter: ["responsive", "hover"],
+    // ...
+  },
+  plugins: [require("tailwindcss-triangle-after")()],
+};
 ```
 
-This configuration would create the following classes ideal for using for customizing `<select>` elements and adding arrows to pagination links:
+This configuration would create the following classes ideal for customizing `<select>` elements and adding arrows to pagination links:
 
 ```css
 .triangle-after-select {
@@ -66,7 +64,7 @@ This configuration would create the following classes ideal for using for custom
   transform: translateY(-50%);
   width: 0;
   right: 1rem;
-  border-top-color: #3490dc;
+  border-top-color: #000000;
   border-width: 6px 5px 0 5px;
 }
 
@@ -85,9 +83,17 @@ This configuration would create the following classes ideal for using for custom
   transform: translateY(-50%);
   width: 0;
   right: 2rem;
-  border-left-color: #1c3d5a;
+  border-left-color: #3182ce;
   border-width: 12px 0 12px 12px;
 }
 ```
 
-As per the [tailwind plugin docs](https://tailwindcss.com/docs/plugins/) you can pass variants (responsive, hover, etc.) as a parameter.
+## Options
+
+| Name        | Type                                    | Required / Default   | Description                                                                                                                                                                                                                                                                                           |
+| ----------- | --------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `color`     | `string`                                | _required_, `""`     | The color of the triangle. Needs to be a CSS color name, hex code, rgb(a) value, or reference to one of your Tailwind colors via `theme()`.                                                                                                                                                           |
+| `direction` | `string`                                | _required_, `""`     | The direction the arrow points. Needs to be: `up`, `down`, `left` or `right`.                                                                                                                                                                                                                         |
+| `top`       | `string`                                | _optional_, `"50%"`  | The distance from the top of the parent element. Needs to be a valid CSS spacing value.                                                                                                                                                                                                               |
+| `right`     | `string`                                | _optional_, `"1rem"` | The distance from the right of the parent element. Needs to be a valid CSS spacing value.                                                                                                                                                                                                             |
+| `size`      | `array` of integers OR single `integer` | _required_, `""`     | The width and height of the triangle. If an array is passed, the first item in the array is used as the width and the second item as the height (_e.g._ `[width, height]`). If a single integer is passed it will be used for both the width and the height, and so the triangle will be equilateral. |
